@@ -1,18 +1,10 @@
-IF COL_LENGTH('dbo.Guests', 'PhoneNumber') IS NULL
-BEGIN
-    ALTER TABLE dbo.Guests
-    ADD PhoneNumber NVARCHAR(30) NULL;
+USE [SLT];
+GO
 
-    PRINT 'PhoneNumber column added successfully.';
-END
-ELSE
-BEGIN
-    PRINT 'PhoneNumber column already exists.';
-END;
-
-
-
-<add key="CorsAllowedOrigins"
-  value="http://127.0.0.1:5500,http://localhost:5500,http://localhost:4200,https://localhost:44384" />
-
-
+UPDATE [dbo].[GuestEventDrivers]
+SET
+    [Email] = 'engy.ramadaneid@vodafone.com.eg',
+    [ModifiedAt] = GETDATE(),
+    [ModifiedBy] = 'Admin',
+    [RetentionDateModified] = GETDATE()
+WHERE [Email] = 'slt.testguest01@example.com';
