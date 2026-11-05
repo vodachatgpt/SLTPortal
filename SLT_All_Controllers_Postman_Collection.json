@@ -1,0 +1,3478 @@
+{
+  "info": {
+    "name": "SLTProject - All Controllers (Module Routes) - 2026-11-05",
+    "_postman_id": "slt-all-controllers-20261105",
+    "description": "Generated against SLT_Own_Controllers_Complete_Source.zip. Admin paging/export routes belong to each module, not /admin-tables. Set baseUrl to host URL including /api. Requests are examples, not an automated destructive runner. Dummy SQL records are NOT login-enabled. CSV/XLSX and image requests download as binary.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "noauth"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost:44384/api"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "guestToken",
+      "value": ""
+    },
+    {
+      "key": "adminId",
+      "value": "1"
+    },
+    {
+      "key": "guestId",
+      "value": "1"
+    },
+    {
+      "key": "phaseId",
+      "value": "1"
+    },
+    {
+      "key": "blurIconId",
+      "value": "1"
+    },
+    {
+      "key": "supportId",
+      "value": "1"
+    },
+    {
+      "key": "templateId",
+      "value": "1"
+    },
+    {
+      "key": "transferId",
+      "value": "1"
+    },
+    {
+      "key": "dayScheduleId",
+      "value": "1"
+    },
+    {
+      "key": "driverId",
+      "value": "1"
+    },
+    {
+      "key": "weatherId",
+      "value": "1"
+    },
+    {
+      "key": "sampleEmail",
+      "value": "slt.demo01@example.test"
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@example.com"
+    },
+    {
+      "key": "adminPasscode",
+      "value": "000000"
+    },
+    {
+      "key": "guestPasscode",
+      "value": "000000"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Admin Auth",
+      "item": [
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/admin-auth/login",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Email\": \"{{adminEmail}}\",\n  \"Passcode\": \"{{adminPasscode}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if(pm.response.code===200){ const j=pm.response.json(); if(j.Token) pm.collectionVariables.set(\"adminToken\",j.Token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Admin Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/admin-auth/me",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 Guest Auth",
+      "item": [
+        {
+          "name": "Login Guest",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/guest-auth/login",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Passcode\": \"{{guestPasscode}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if(pm.response.code===200){const j=pm.response.json();if(j.Token)pm.collectionVariables.set(\"guestToken\",j.Token);if(j.Guest&&j.Guest.Id)pm.collectionVariables.set(\"guestId\",String(j.Guest.Id));}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Guest Current Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guest-auth/me",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Guest Own QR",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guest-auth/my-qr",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Register Guest for Tour",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/guest-auth/tour-register",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Resend Guest Passcode",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/guest-auth/resend-passcode",
+            "description": "Returns generic success to prevent account enumeration. Dummy SQL guests have no working issued passcode; create via guest API for login.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Email\": \"{{sampleEmail}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Administrators",
+      "item": [
+        {
+          "name": "Get All Admins",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/admins",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Admin by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/admins/{{adminId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/admins",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"FullName\": \"SLT Test Admin\",\n  \"Email\": \"slt.testadmin@example.test\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));",
+                  "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                  "  let j = {}; try { j = pm.response.json(); } catch(e) {}",
+                  "  const id = j.Id || (j.Record && j.Record.Id) || (j.Guest && j.Guest.Id) || (j.Admin && j.Admin.Id) || (j.result && j.result.Id);",
+                  "  if (id) pm.collectionVariables.set(\"adminId\", String(id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Admin",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/admins/{{adminId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"FullName\": \"SLT Updated Admin\",\n  \"Email\": \"slt.testadmin@example.test\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reset Admin Passcode",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/admins/{{adminId}}/reset-passcode",
+            "description": "Revokes current target admin session. Destructive.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Soft Delete Admin",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/admins/{{adminId}}",
+            "description": "Destructive. Cannot delete self.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 Guests",
+      "item": [
+        {
+          "name": "All Guests (legacy)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guests",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Guests Paged + Search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guests/paged?Page=1&PageSize=20&Search=SLT",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Guests Paged + Filters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guests/paged?Page=1&PageSize=10&Hotel=Sample&Activated=false&TourRegister=false&From=2026-11-01&To=2026-11-30",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Guests Filtered XLSX Export",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guests/export?Search=SLT&Hotel=Sample",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logged In Guest Count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guests/statistics/logged-in",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Guest by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guests/{{guestId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Guest",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/guests",
+            "description": "Creates guest and returns newly generated one-time passcode; handle securely.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"FullName\": \"SLT Demo 01\",\n  \"Email\": \"slt.demo01@example.test\",\n  \"PhoneNumber\": \"+201001234501\",\n  \"ArrivalDate\": \"2026-11-09\",\n  \"ArrivalFlight\": \"MS101\",\n  \"LandingTime\": \"09:15:00\",\n  \"DepartureDate\": \"2026-11-16\",\n  \"DepartureFlight\": \"MS102\",\n  \"DepartureTime\": \"18:30:00\",\n  \"HotelName\": \"Sample Cairo Hotel\",\n  \"CheckInDate\": \"2026-11-09\",\n  \"CheckInTime\": \"14:00:00\",\n  \"CheckOutDate\": \"2026-11-16\",\n  \"CheckOutTime\": \"12:00:00\",\n  \"TourRegister\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));",
+                  "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                  "  let j = {}; try { j = pm.response.json(); } catch(e) {}",
+                  "  const id = j.Id || (j.Record && j.Record.Id) || (j.Guest && j.Guest.Id) || (j.Admin && j.Admin.Id) || (j.result && j.result.Id);",
+                  "  if (id) pm.collectionVariables.set(\"guestId\", String(id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Guest",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/guests/{{guestId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"PhoneNumber\": \"+201001234599\",\n  \"HotelName\": \"Updated Demo Hotel\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Guest Passcode (admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guests/{{guestId}}/passcode",
+            "description": "Sensitive; do not save shared test outputs or log passcodes.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reset Guest Passcode",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/guests/{{guestId}}/reset-passcode",
+            "description": "Revokes guest session and generates a new passcode.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Upload Guest QR",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/guests/{{guestId}}/qr",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Download Guest QR",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guests/{{guestId}}/qr",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Remove Guest QR",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/guests/{{guestId}}/qr",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bulk Upload Guests XLSX",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/guests/bulk-upload",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Encryption Diagnostic (temporary)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guests/diagnostics/encryption",
+            "description": "Temporary diagnostic; remove in production.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Soft Delete Guest",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/guests/{{guestId}}",
+            "description": "Destructive.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 Airport Transfers",
+      "item": [
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/airport-transfers",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Paged with Filters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/airport-transfers/paged?Page=1&PageSize=10&Type=Pickup&Email={{sampleEmail}}&From=2026-11-01&To=2026-11-30",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filtered XLSX Export",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/airport-transfers/export?Type=Pickup&Email={{sampleEmail}}&From=2026-11-01&To=2026-11-30",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/airport-transfers/{{transferId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/airport-transfers",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Email\": \"slt.demo01@example.test\",\n  \"Type\": \"Pickup\",\n  \"Date\": \"2026-11-09\",\n  \"DriverName\": \"Demo Driver 1\",\n  \"DriverPhone\": \"+201055501001\",\n  \"WhatsApp\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));",
+                  "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                  "  let j = {}; try { j = pm.response.json(); } catch(e) {}",
+                  "  const id = j.Id || (j.Record && j.Record.Id) || (j.Guest && j.Guest.Id) || (j.Admin && j.Admin.Id) || (j.result && j.result.Id);",
+                  "  if (id) pm.collectionVariables.set(\"transferId\", String(id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/airport-transfers/{{transferId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Email\": \"slt.demo01@example.test\",\n  \"Type\": \"Pickup\",\n  \"Date\": \"2026-11-09\",\n  \"DriverName\": \"Demo Driver 1\",\n  \"DriverPhone\": \"+201055501001\",\n  \"WhatsApp\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Excel Template",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/airport-transfers/template",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Import XLSX",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/airport-transfers/import",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete (soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/airport-transfers/{{transferId}}",
+            "description": "Destructive.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Guest - Own Records",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/airport-transfers",
+            "description": "Guest requests are restricted to authenticated guest email by the controller.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Guest - Own Record by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/airport-transfers/{{transferId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 Day Schedules",
+      "item": [
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/day-schedules",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Paged with Filters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/day-schedules/paged?Page=1&PageSize=10&Type=Workshop&From=2026-11-01&To=2026-11-30",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filtered XLSX Export",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/day-schedules/export?Type=Workshop&From=2026-11-01&To=2026-11-30",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/day-schedules/{{dayScheduleId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/day-schedules",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Date\": \"2026-11-10\",\n  \"ItemType\": \"Workshop\",\n  \"Title\": \"SLT Demo Workshop 1\",\n  \"BlurIconName\": null,\n  \"StartTime\": \"09:00:00\",\n  \"EndTime\": \"11:00:00\",\n  \"ShortNote\": \"Demonstration event\",\n  \"DressCode\": \"Smart casual\",\n  \"LocationName\": \"Demo Venue A\",\n  \"MapsLink\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));",
+                  "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                  "  let j = {}; try { j = pm.response.json(); } catch(e) {}",
+                  "  const id = j.Id || (j.Record && j.Record.Id) || (j.Guest && j.Guest.Id) || (j.Admin && j.Admin.Id) || (j.result && j.result.Id);",
+                  "  if (id) pm.collectionVariables.set(\"dayScheduleId\", String(id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/day-schedules/{{dayScheduleId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Date\": \"2026-11-10\",\n  \"ItemType\": \"Workshop\",\n  \"Title\": \"SLT Demo Workshop 1\",\n  \"BlurIconName\": null,\n  \"StartTime\": \"09:00:00\",\n  \"EndTime\": \"11:00:00\",\n  \"ShortNote\": \"Demonstration event\",\n  \"DressCode\": \"Smart casual\",\n  \"LocationName\": \"Demo Venue A\",\n  \"MapsLink\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Excel Template",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/day-schedules/template",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Import XLSX",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/day-schedules/import",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete (soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/day-schedules/{{dayScheduleId}}",
+            "description": "Destructive.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "07 Event Drivers",
+      "item": [
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guest-event-drivers",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Paged with Filters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guest-event-drivers/paged?Page=1&PageSize=10&Email={{sampleEmail}}&DayScheduleId={{dayScheduleId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filtered XLSX Export",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guest-event-drivers/export?Email={{sampleEmail}}&DayScheduleId={{dayScheduleId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guest-event-drivers/{{driverId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/guest-event-drivers",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Email\": \"slt.demo01@example.test\",\n  \"DayScheduleId\": 1,\n  \"DriverName\": \"Demo Event Driver 1\",\n  \"DriverPhone\": \"+201055502001\",\n  \"WhatsApp\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));",
+                  "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                  "  let j = {}; try { j = pm.response.json(); } catch(e) {}",
+                  "  const id = j.Id || (j.Record && j.Record.Id) || (j.Guest && j.Guest.Id) || (j.Admin && j.Admin.Id) || (j.result && j.result.Id);",
+                  "  if (id) pm.collectionVariables.set(\"driverId\", String(id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/guest-event-drivers/{{driverId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Email\": \"slt.demo01@example.test\",\n  \"DayScheduleId\": 1,\n  \"DriverName\": \"Demo Event Driver 1\",\n  \"DriverPhone\": \"+201055502001\",\n  \"WhatsApp\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Excel Template",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guest-event-drivers/template",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Import XLSX",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/guest-event-drivers/import",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete (soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/guest-event-drivers/{{driverId}}",
+            "description": "Destructive.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Guest - Own Records",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guest-event-drivers",
+            "description": "Guest requests are restricted to authenticated guest email by the controller.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Guest - Own Record by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guest-event-drivers/{{driverId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Guest - Filter by Day Schedule",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/guest-event-drivers?dayScheduleId={{dayScheduleId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "08 Phases",
+      "item": [
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/phases",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/phases/{{phaseId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/phases",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Title\": \"SLT Demo Phase\",\n  \"Date\": \"2026-11-10\",\n  \"EventWelcomeMessage\": \"Welcome to the SLT demo\",\n  \"EventSloganMessage\": \"Together we grow\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));",
+                  "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                  "  let j = {}; try { j = pm.response.json(); } catch(e) {}",
+                  "  const id = j.Id || (j.Record && j.Record.Id) || (j.Guest && j.Guest.Id) || (j.Admin && j.Admin.Id) || (j.result && j.result.Id);",
+                  "  if (id) pm.collectionVariables.set(\"phaseId\", String(id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/phases/{{phaseId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Title\": \"SLT Demo Phase\",\n  \"Date\": \"2026-11-10\",\n  \"EventWelcomeMessage\": \"Welcome to the SLT demo\",\n  \"EventSloganMessage\": \"Together we grow\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/phases/{{phaseId}}",
+            "description": "Destructive.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Guest - Get All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/phases",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "09 Blurb Icons",
+      "item": [
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/blur-icons",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/blur-icons/{{blurIconId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/blur-icons",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Name\": \"SLT Demo Star\",\n  \"Shape\": \"Circle\",\n  \"SVG\": \"<svg xmlns=\\\"http://www.w3.org/2000/svg\\\" viewBox=\\\"0 0 24 24\\\"><circle cx=\\\"12\\\" cy=\\\"12\\\" r=\\\"8\\\" fill=\\\"#c8102e\\\"/></svg>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));",
+                  "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                  "  let j = {}; try { j = pm.response.json(); } catch(e) {}",
+                  "  const id = j.Id || (j.Record && j.Record.Id) || (j.Guest && j.Guest.Id) || (j.Admin && j.Admin.Id) || (j.result && j.result.Id);",
+                  "  if (id) pm.collectionVariables.set(\"blurIconId\", String(id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/blur-icons/{{blurIconId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Name\": \"SLT Demo Star\",\n  \"Shape\": \"Circle\",\n  \"SVG\": \"<svg xmlns=\\\"http://www.w3.org/2000/svg\\\" viewBox=\\\"0 0 24 24\\\"><circle cx=\\\"12\\\" cy=\\\"12\\\" r=\\\"8\\\" fill=\\\"#c8102e\\\"/></svg>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/blur-icons/{{blurIconId}}",
+            "description": "Destructive.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Guest - Get All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/blur-icons",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "10 Help & Support",
+      "item": [
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/help-support",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/help-support/{{supportId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/help-support",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"EventContact\": \"Demo event desk +20 100 000 0000\",\n  \"Transportation\": \"Contact transport desk\",\n  \"Emergency\": \"Call local emergency services\",\n  \"HealthandSafety\": \"Follow venue safety guidance\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));",
+                  "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                  "  let j = {}; try { j = pm.response.json(); } catch(e) {}",
+                  "  const id = j.Id || (j.Record && j.Record.Id) || (j.Guest && j.Guest.Id) || (j.Admin && j.Admin.Id) || (j.result && j.result.Id);",
+                  "  if (id) pm.collectionVariables.set(\"supportId\", String(id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/help-support/{{supportId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"EventContact\": \"Demo event desk +20 100 000 0000\",\n  \"Transportation\": \"Contact transport desk\",\n  \"Emergency\": \"Call local emergency services\",\n  \"HealthandSafety\": \"Follow venue safety guidance\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/help-support/{{supportId}}",
+            "description": "Destructive.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Guest - Get All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/help-support",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "11 Email Templates",
+      "item": [
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/email-templates",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/email-templates/{{templateId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/email-templates",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"TemplateKey\": \"SLT_DEMO_MAIL\",\n  \"TemplateName\": \"Demo Email\",\n  \"Subject\": \"Welcome {{FullName}}\",\n  \"BodyHtml\": \"<p>Welcome!</p>\",\n  \"IsActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));",
+                  "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                  "  let j = {}; try { j = pm.response.json(); } catch(e) {}",
+                  "  const id = j.Id || (j.Record && j.Record.Id) || (j.Guest && j.Guest.Id) || (j.Admin && j.Admin.Id) || (j.result && j.result.Id);",
+                  "  if (id) pm.collectionVariables.set(\"templateId\", String(id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/email-templates/{{templateId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"TemplateKey\": \"SLT_DEMO_MAIL\",\n  \"TemplateName\": \"Demo Email\",\n  \"Subject\": \"Welcome {{FullName}}\",\n  \"BodyHtml\": \"<p>Welcome!</p>\",\n  \"IsActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/email-templates/{{templateId}}",
+            "description": "Destructive.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Filtered",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/email-templates?search=guest&isActive=true",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Preview Template",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/email-templates/{{templateId}}/preview",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "12 Customized Responses",
+      "item": [
+        {
+          "name": "Combined Events (admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/customizedResponses/events?email={{sampleEmail}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Combined Guests (admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/customizedResponses/guests?email={{sampleEmail}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Combined Events (guest)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/customizedResponses/events",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Combined Guest Details (guest)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/customizedResponses/guests",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "13 Weather Forecasts",
+      "item": [
+        {
+          "name": "Create One-Day Forecast",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/weather-forecasts",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"LocationName\": \"Cairo\",\n  \"Latitude\": 30.0444,\n  \"Longitude\": 31.2357,\n  \"TimeZone\": \"Africa/Cairo\",\n  \"Daily\": {\n    \"Time\": [\n      \"2026-11-10\"\n    ],\n    \"MaxTemperature\": [\n      27\n    ],\n    \"MinTemperature\": [\n      16\n    ],\n    \"WeatherCode\": [\n      1\n    ],\n    \"Precipitation\": [\n      0\n    ],\n    \"MaxWindSpeed\": [\n      18\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code >= 200 && pm.response.code < 300) {",
+                  "  let j = {}; try { j = pm.response.json(); } catch(e) {}",
+                  "  const id = j.Id || (j.Record && j.Record.Id) || (j.Guest && j.Guest.Id) || (j.Admin && j.Admin.Id) || (j.result && j.result.Id);",
+                  "  if (id) pm.collectionVariables.set(\"weatherId\", String(id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Batch of Forecasts",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/weather-forecasts/batch",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Items\": [\n    {\n      \"LocationName\": \"Cairo\",\n      \"Latitude\": 30.0444,\n      \"Longitude\": 31.2357,\n      \"TimeZone\": \"Africa/Cairo\",\n      \"Daily\": {\n        \"Time\": [\n          \"2026-11-10\"\n        ],\n        \"MaxTemperature\": [\n          27\n        ],\n        \"MinTemperature\": [\n          16\n        ],\n        \"WeatherCode\": [\n          1\n        ],\n        \"Precipitation\": [\n          0\n        ],\n        \"MaxWindSpeed\": [\n          18\n        ]\n      }\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/weather-forecasts",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Filtered",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/weather-forecasts?latitude=30.0444&longitude=31.2357",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Latest by Coordinates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/weather-forecasts/latest?latitude=30.0444&longitude=31.2357",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Forecast by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/weather-forecasts/{{weatherId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Not a missing route (404)\", () => pm.expect(pm.response.code).not.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Forecast",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/weather-forecasts/{{weatherId}}",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"MaxTemperatureC\": 29,\n  \"MinTemperatureC\": 17,\n  \"WeatherCode\": 1,\n  \"PrecipitationMm\": 0,\n  \"MaxWindSpeedKmh\": 20\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Forecast",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/weather-forecasts/{{weatherId}}",
+            "description": "Destructive, and endpoint is publicly accessible in current source.",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Delete Expired Forecasts",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/weather-forecasts/expired",
+            "description": "Destructive, and endpoint is publicly accessible in current source.",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Schedule Cleanup",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/weather-forecasts/schedule-cleanup",
+            "description": "Creates Hangfire cleanup schedule; publicly accessible in source.",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Remove Cleanup Schedule",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/weather-forecasts/schedule-cleanup",
+            "description": "Removes Hangfire cleanup schedule; publicly accessible in source.",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Run Cleanup",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/weather-forecasts/process-cleanup",
+            "description": "Runs cleanup; publicly accessible in source.",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
