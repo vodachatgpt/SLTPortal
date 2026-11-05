@@ -1,1 +1,11 @@
-Hello
+IF COL_LENGTH('dbo.Guests', 'PhoneNumber') IS NULL
+BEGIN
+    ALTER TABLE dbo.Guests
+    ADD PhoneNumber NVARCHAR(30) NULL;
+
+    PRINT 'PhoneNumber column added successfully.';
+END
+ELSE
+BEGIN
+    PRINT 'PhoneNumber column already exists.';
+END;
