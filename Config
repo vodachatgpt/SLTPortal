@@ -1,10 +1,55 @@
 USE [SLT];
 GO
-
-UPDATE [dbo].[GuestEventDrivers]
-SET
-    [Email] = 'engy.ramadaneid@vodafone.com.eg',
-    [ModifiedAt] = GETDATE(),
-    [ModifiedBy] = 'Admin',
-    [RetentionDateModified] = GETDATE()
-WHERE [Email] = 'slt.testguest01@example.com';
+IF OBJECT_ID(N'dbo.SltNotifications', N'U') IS NULL
+BEGIN
+ CREATE TABLE dbo.SltNotifications (
+   Id bigint IDENTITY(1,1) NOT NULL CONSTRAINT PK_SltNotifications PRIMARY KEY,
+   Title nvarchar(120) NOT NULL,
+   MessageText nvarchar(max) NOT NULL,
+   TargetType nvarchar(20) NOT NULL,
+   TargetGuestId bigint NULL,
+   ClickUrl nvarchar(500) NULL,
+   CreatedByAdminId bigint NOT NULL,
+   CreatedByEmail nvarchar(320) NULL,
+   CreatedAt datetime2(3) NOT NULL,
+   PushStatus nvarchar(32) NOT NULL CONSTRAINT DF_SltNotifications_PushStatus DEFAULT(N'Pending'),
+   ProviderNotificationId bigint NULL,
+   PushError nvarchar(500) NULL,
+   IdempotencyKey nvarchar(100) NULL,
+   CONSTRAINT CK_SltNotifications_Target CHECK ((TargetType = N'All' AND TargetGuestId IS NULL) OR (TargetType = N'Guest' AND TargetGuestId IS NOT NULL)),
+   CONSTRAINT CK_SltNotifications_Push CHECK (PushStatus IN (N'Pending',N'Queued',N'Failed',N'NotConfigured'))
+ );
+ CREATE UNIQUE INDEX UX_SltNotifications_IdempotencyKey ON dbo.SltNotifications(IdempotencyKey) WHERE IdempotencyKey IS NOT NULL;
+ CREATE INDEX IX_SltNotifications_CreatedAt ON dbo.SltNotifications(CreatedAt DESC,Id DESC);
+END;
+GO
+IF OBJECT_ID(N'dbo.SltNotificationRecipients',N'U') IS NULL
+BEGIN
+ CREATE TABLE dbo.SltNotificationRecipients (
+   Id bigint IDENTITY(1,1) NOT NULL CONSTRAINT PK_SltNotificationRecipients PRIMARY KEY,
+   NotificationId bigint NOT NULL,
+   GuestId bigint NOT NULL,
+   IsRead bit NOT NULL CONSTRAINT DF_SltNotificationRecipients_IsRead DEFAULT(0),
+   ReadAt datetime2(3) NULL,
+   CONSTRAINT FK_SltNotificationRecipients_Notification FOREIGN KEY(NotificationId) REFERENCES dbo.SltNotifications(Id),
+   CONSTRAINT FK_SltNotificationRecipients_Guest FOREIGN KEY(GuestId) REFERENCES dbo.Guests(Id),
+   CONSTRAINT UQ_SltNotificationRecipients UNIQUE(NotificationId,GuestId)
+ );
+ CREATE INDEX IX_SltNotificationRecipients_GuestRead ON dbo.SltNotificationRecipients(GuestId,IsRead,NotificationId DESC);
+END;
+GO
+IF OBJECT_ID(N'dbo.SltNotificationAdminReads',N'U') IS NULL
+BEGIN
+ CREATE TABLE dbo.SltNotificationAdminReads (
+   Id bigint IDENTITY(1,1) NOT NULL CONSTRAINT PK_SltNotificationAdminReads PRIMARY KEY,
+   NotificationId bigint NOT NULL,
+   AdminId bigint NOT NULL,
+   ReadAt datetime2(3) NOT NULL,
+   CONSTRAINT FK_SltNotificationAdminReads_Notification FOREIGN KEY(NotificationId) REFERENCES dbo.SltNotifications(Id),
+   CONSTRAINT FK_SltNotificationAdminReads_Admin FOREIGN KEY(AdminId) REFERENCES dbo.Admins(Id),
+   CONSTRAINT UQ_SltNotificationAdminReads UNIQUE(NotificationId,AdminId)
+ );
+ CREATE INDEX IX_SltNotificationAdminReads_Admin ON dbo.SltNotificationAdminReads(AdminId,NotificationId);
+END;
+GO
+SELECT 'SltNotifications' AS TableName, COUNT(*) AS RowCount FROM dbo.SltNotifications;
