@@ -53,3 +53,47 @@ BEGIN
 END;
 GO
 SELECT 'SltNotifications' AS TableName, COUNT(*) AS RowCount FROM dbo.SltNotifications;
+-- Execute on SLT database; review and back up before production rollout.
+-- Refresh EF6 EDMX from database after this migration.
+IF COL_LENGTH('dbo.Guests','EmailSent') IS NULL
+    ALTER TABLE dbo.Guests ADD EmailSent bit NOT NULL CONSTRAINT DF_Guests_EmailSent DEFAULT(0);
+IF COL_LENGTH('dbo.Guests','SmsSent') IS NULL
+    ALTER TABLE dbo.Guests ADD SmsSent bit NOT NULL CONSTRAINT DF_Guests_SmsSent DEFAULT(0);
+IF COL_LENGTH('dbo.Guests','WalletUrl') IS NULL
+    ALTER TABLE dbo.Guests ADD WalletUrl nvarchar(1000) NULL;
+IF OBJECT_ID('dbo.SmsTemplates','U') IS NULL
+BEGIN
+ CREATE TABLE dbo.SmsTemplates (
+    Id bigint IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    TemplateKey nvarchar(100) NOT NULL,
+    TemplateBody nvarchar(2000) NOT NULL,
+    IsActive bit NOT NULL CONSTRAINT DF_SmsTemplates_IsActive DEFAULT(1),
+    CreatedBy nvarchar(250) NULL,
+    RetentionDateCreated datetime2(3) NOT NULL CONSTRAINT DF_SmsTemplates_Created DEFAULT(SYSDATETIME()),
+    ModifiedBy nvarchar(250) NULL,
+    RetentionDateModified datetime2(3) NULL,
+    CONSTRAINT UQ_SmsTemplates_TemplateKey UNIQUE(TemplateKey)
+ );
+END;
+IF NOT EXISTS(SELECT 1 FROM dbo.SmsTemplates WHERE TemplateKey='GUEST_WELCOME_SMS')
+ INSERT dbo.SmsTemplates (TemplateKey,TemplateBody,CreatedBy)
+ VALUES('GUEST_WELCOME_SMS', 'Hello {FullName}, welcome to SLT. Open {LoginUrl} and sign in using the 6-digit passcode sent to your email. Wallet: {WalletUrl}', 'migration');
+IF OBJECT_ID('dbo.GuestMessageDeliveries','U') IS NULL
+BEGIN
+ CREATE TABLE dbo.GuestMessageDeliveries (
+    Id bigint IDENTITY(1,1) PRIMARY KEY,
+    GuestId bigint NOT NULL,
+    Channel nvarchar(10) NOT NULL,
+    TemplateKey nvarchar(100) NOT NULL,
+    Status nvarchar(20) NOT NULL,
+    AttemptedAt datetime2(3) NOT NULL,
+    CompletedAt datetime2(3) NULL,
+    ErrorMessage nvarchar(1000) NULL,
+    CreatedBy nvarchar(250) NOT NULL,
+    CONSTRAINT FK_GuestMessageDeliveries_Guests FOREIGN KEY(GuestId) REFERENCES dbo.Guests(Id),
+    CONSTRAINT CK_GuestMessageDeliveries_Channel CHECK(Channel IN ('Email','Sms')),
+    CONSTRAINT CK_GuestMessageDeliveries_Status CHECK(Status IN ('Pending','Accepted','Failed'))
+ );
+ CREATE INDEX IX_GuestMessageDeliveries_GuestId ON dbo.GuestMessageDeliveries(GuestId, AttemptedAt DESC);
+END;
+
