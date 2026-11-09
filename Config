@@ -1,99 +1,32 @@
-USE [SLT];
-GO
-IF OBJECT_ID(N'dbo.SltNotifications', N'U') IS NULL
-BEGIN
- CREATE TABLE dbo.SltNotifications (
-   Id bigint IDENTITY(1,1) NOT NULL CONSTRAINT PK_SltNotifications PRIMARY KEY,
-   Title nvarchar(120) NOT NULL,
-   MessageText nvarchar(max) NOT NULL,
-   TargetType nvarchar(20) NOT NULL,
-   TargetGuestId bigint NULL,
-   ClickUrl nvarchar(500) NULL,
-   CreatedByAdminId bigint NOT NULL,
-   CreatedByEmail nvarchar(320) NULL,
-   CreatedAt datetime2(3) NOT NULL,
-   PushStatus nvarchar(32) NOT NULL CONSTRAINT DF_SltNotifications_PushStatus DEFAULT(N'Pending'),
-   ProviderNotificationId bigint NULL,
-   PushError nvarchar(500) NULL,
-   IdempotencyKey nvarchar(100) NULL,
-   CONSTRAINT CK_SltNotifications_Target CHECK ((TargetType = N'All' AND TargetGuestId IS NULL) OR (TargetType = N'Guest' AND TargetGuestId IS NOT NULL)),
-   CONSTRAINT CK_SltNotifications_Push CHECK (PushStatus IN (N'Pending',N'Queued',N'Failed',N'NotConfigured'))
- );
- CREATE UNIQUE INDEX UX_SltNotifications_IdempotencyKey ON dbo.SltNotifications(IdempotencyKey) WHERE IdempotencyKey IS NOT NULL;
- CREATE INDEX IX_SltNotifications_CreatedAt ON dbo.SltNotifications(CreatedAt DESC,Id DESC);
-END;
-GO
-IF OBJECT_ID(N'dbo.SltNotificationRecipients',N'U') IS NULL
-BEGIN
- CREATE TABLE dbo.SltNotificationRecipients (
-   Id bigint IDENTITY(1,1) NOT NULL CONSTRAINT PK_SltNotificationRecipients PRIMARY KEY,
-   NotificationId bigint NOT NULL,
-   GuestId bigint NOT NULL,
-   IsRead bit NOT NULL CONSTRAINT DF_SltNotificationRecipients_IsRead DEFAULT(0),
-   ReadAt datetime2(3) NULL,
-   CONSTRAINT FK_SltNotificationRecipients_Notification FOREIGN KEY(NotificationId) REFERENCES dbo.SltNotifications(Id),
-   CONSTRAINT FK_SltNotificationRecipients_Guest FOREIGN KEY(GuestId) REFERENCES dbo.Guests(Id),
-   CONSTRAINT UQ_SltNotificationRecipients UNIQUE(NotificationId,GuestId)
- );
- CREATE INDEX IX_SltNotificationRecipients_GuestRead ON dbo.SltNotificationRecipients(GuestId,IsRead,NotificationId DESC);
-END;
-GO
-IF OBJECT_ID(N'dbo.SltNotificationAdminReads',N'U') IS NULL
-BEGIN
- CREATE TABLE dbo.SltNotificationAdminReads (
-   Id bigint IDENTITY(1,1) NOT NULL CONSTRAINT PK_SltNotificationAdminReads PRIMARY KEY,
-   NotificationId bigint NOT NULL,
-   AdminId bigint NOT NULL,
-   ReadAt datetime2(3) NOT NULL,
-   CONSTRAINT FK_SltNotificationAdminReads_Notification FOREIGN KEY(NotificationId) REFERENCES dbo.SltNotifications(Id),
-   CONSTRAINT FK_SltNotificationAdminReads_Admin FOREIGN KEY(AdminId) REFERENCES dbo.Admins(Id),
-   CONSTRAINT UQ_SltNotificationAdminReads UNIQUE(NotificationId,AdminId)
- );
- CREATE INDEX IX_SltNotificationAdminReads_Admin ON dbo.SltNotificationAdminReads(AdminId,NotificationId);
-END;
-GO
-SELECT 'SltNotifications' AS TableName, COUNT(*) AS RowCount FROM dbo.SltNotifications;
--- Execute on SLT database; review and back up before production rollout.
--- Refresh EF6 EDMX from database after this migration.
-IF COL_LENGTH('dbo.Guests','EmailSent') IS NULL
-    ALTER TABLE dbo.Guests ADD EmailSent bit NOT NULL CONSTRAINT DF_Guests_EmailSent DEFAULT(0);
-IF COL_LENGTH('dbo.Guests','SmsSent') IS NULL
-    ALTER TABLE dbo.Guests ADD SmsSent bit NOT NULL CONSTRAINT DF_Guests_SmsSent DEFAULT(0);
-IF COL_LENGTH('dbo.Guests','WalletUrl') IS NULL
-    ALTER TABLE dbo.Guests ADD WalletUrl nvarchar(1000) NULL;
-IF OBJECT_ID('dbo.SmsTemplates','U') IS NULL
-BEGIN
- CREATE TABLE dbo.SmsTemplates (
-    Id bigint IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    TemplateKey nvarchar(100) NOT NULL,
-    TemplateBody nvarchar(2000) NOT NULL,
-    IsActive bit NOT NULL CONSTRAINT DF_SmsTemplates_IsActive DEFAULT(1),
-    CreatedBy nvarchar(250) NULL,
-    RetentionDateCreated datetime2(3) NOT NULL CONSTRAINT DF_SmsTemplates_Created DEFAULT(SYSDATETIME()),
-    ModifiedBy nvarchar(250) NULL,
-    RetentionDateModified datetime2(3) NULL,
-    CONSTRAINT UQ_SmsTemplates_TemplateKey UNIQUE(TemplateKey)
- );
-END;
-IF NOT EXISTS(SELECT 1 FROM dbo.SmsTemplates WHERE TemplateKey='GUEST_WELCOME_SMS')
- INSERT dbo.SmsTemplates (TemplateKey,TemplateBody,CreatedBy)
- VALUES('GUEST_WELCOME_SMS', 'Hello {FullName}, welcome to SLT. Open {LoginUrl} and sign in using the 6-digit passcode sent to your email. Wallet: {WalletUrl}', 'migration');
-IF OBJECT_ID('dbo.GuestMessageDeliveries','U') IS NULL
-BEGIN
- CREATE TABLE dbo.GuestMessageDeliveries (
-    Id bigint IDENTITY(1,1) PRIMARY KEY,
-    GuestId bigint NOT NULL,
-    Channel nvarchar(10) NOT NULL,
-    TemplateKey nvarchar(100) NOT NULL,
-    Status nvarchar(20) NOT NULL,
-    AttemptedAt datetime2(3) NOT NULL,
-    CompletedAt datetime2(3) NULL,
-    ErrorMessage nvarchar(1000) NULL,
-    CreatedBy nvarchar(250) NOT NULL,
-    CONSTRAINT FK_GuestMessageDeliveries_Guests FOREIGN KEY(GuestId) REFERENCES dbo.Guests(Id),
-    CONSTRAINT CK_GuestMessageDeliveries_Channel CHECK(Channel IN ('Email','Sms')),
-    CONSTRAINT CK_GuestMessageDeliveries_Status CHECK(Status IN ('Pending','Accepted','Failed'))
- );
- CREATE INDEX IX_GuestMessageDeliveries_GuestId ON dbo.GuestMessageDeliveries(GuestId, AttemptedAt DESC);
-END;
+[SltAdmin]
+[RoutePrefix("api/SLTLimits")]
+public class LimitsController : ApiController
+{
+    [HttpPost]
+    [Route("ClearAll")]
+    public async Task<IHttpActionResult> ClearAll()
+    {
+        try
+        {
+            using (var db = new SLTEntities())
+            {
+                var records = await db.SLTLoginRateLimits.ToListAsync();
+                int deletedCount = records.Count;
 
+                db.SLTLoginRateLimits.RemoveRange(records);
+                await db.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    Success = true,
+                    DeletedRecords = deletedCount,
+                    Message = "Login throttle records cleared successfully."
+                });
+            }
+        }
+        catch (Exception)
+        {
+            return InternalServerError();
+        }
+    }
+}
