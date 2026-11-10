@@ -1,32 +1,63 @@
-[SltAdmin]
-[RoutePrefix("api/SLTLimits")]
-public class LimitsController : ApiController
-{
-    [HttpPost]
-    [Route("ClearAll")]
-    public async Task<IHttpActionResult> ClearAll()
-    {
-        try
-        {
-            using (var db = new SLTEntities())
-            {
-                var records = await db.SLTLoginRateLimits.ToListAsync();
-                int deletedCount = records.Count;
+z
+<!-- ============================================== -->
+<!-- SLT APPLICATION -->
+<!-- ============================================== -->
 
-                db.SLTLoginRateLimits.RemoveRange(records);
-                await db.SaveChangesAsync();
+<add key="AppName"
+     value="SLTProject" />
 
-                return Ok(new
-                {
-                    Success = true,
-                    DeletedRecords = deletedCount,
-                    Message = "Login throttle records cleared successfully."
-                });
-            }
-        }
-        catch (Exception)
-        {
-            return InternalServerError();
-        }
-    }
-}
+<!-- ============================================== -->
+<!-- ACTIVE DIRECTORY AUTHENTICATION -->
+<!-- ============================================== -->
+
+<!-- Your actual Active Directory DNS domain -->
+<add key="LDAP_Path"
+     value="YOUR-AD-DNS-DOMAIN" />
+
+<!-- Example: vodafone.com.eg -->
+
+<!-- ============================================== -->
+<!-- API KEY AUTHENTICATION -->
+<!-- ============================================== -->
+
+<add key="Auth_APIKeyName"
+     value="X-SLT-API-Key" />
+
+<add key="Auth_ClientId"
+     value="REPLACE_WITH_YOUR_RANDOM_API_KEY" />
+
+<!-- ============================================== -->
+<!-- JWT AUTHENTICATION -->
+<!-- ============================================== -->
+
+<add key="JwtIssuer"
+     value="SLTProject" />
+
+<add key="JwtAudience"
+     value="SLTAdminPortal" />
+
+<!-- Use a unique random secret of at least 32 bytes -->
+<add key="JwtSecretKey"
+     value="REPLACE_WITH_YOUR_64_CHARACTER_RANDOM_SECRET" />
+
+<!-- JWT expiration: 24 hours -->
+<add key="JwtExpiryMinutes"
+     value="1440" />
+
+
+
+# API Key
+$apiKey = [Convert]::ToBase64String(
+    [Security.Cryptography.RandomNumberGenerator]::GetBytes(32)
+)
+
+# JWT Secret
+$jwtSecret = [Convert]::ToBase64String(
+    [Security.Cryptography.RandomNumberGenerator]::GetBytes(64)
+)
+
+Write-Host "API KEY:"
+Write-Host $apiKey
+
+Write-Host "JWT SECRET:"
+Write-Host $jwtSecret
