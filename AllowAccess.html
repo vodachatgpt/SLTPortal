@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>SLT App | Allow Access</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="../manifest.webmanifest">
+    <meta name="theme-color" content="#FFFFFF">
+    <link rel="apple-touch-icon" href="../media/icons/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="SLT App">
+
+    <!-- Fav Icon -->
+    <link rel="icon" type="image/svg+xml" href="../media/assets/VFLogo.svg">
+
+    <!-- Bootstrap -->
+    <link href="../bootstrap/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom css -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/Onboarding.css">
+</head>
+
+<body>
+
+    <main class="container onboarding">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-5 onboarding-col">
+
+                <!-- VF Logo -->
+                <div class="text-center">
+                    <img src="../media/assets/VFLogo.svg" class="vf-logo" alt="Vodafone">
+                </div>
+
+                <!-- Progress -->
+                <div class="progress-track">
+                    <div class="progress-fill w-75" id="progressFill"></div>
+                </div>
+
+                <!-- ================= STEP A: HOME SCREEN SHORTCUT ================= -->
+                <section class="access-step d-none" id="installStep">
+
+                    <div class="text-center">
+                        <img src="../media/assets/AppShortcut.svg" class="step-illustration" alt="">
+                        <h1 class="page-title text-center">Add SLT App to your phone</h1>
+                        <p class="page-subtitle text-center">Open it in one tap from your home screen, like any other app.</p>
+                    </div>
+
+                    <!-- Benefits (Android / default) -->
+                    <ul class="info-card" id="installBenefits">
+                        <li>
+                            <svg viewBox="0 0 24 24"><path d="M13 3L5 13h6l-1 8 8-10h-6l1-8z"/></svg>
+                            <span>Opens in one tap</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>
+                            <span>Full screen, no browser bars</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24"><path d="M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="0.8"/></svg>
+                            <span>Your plan stays available on weak signal</span>
+                        </li>
+                    </ul>
+
+                    <!-- Steps for iPhone / iPad -->
+                    <ol class="info-card steps d-none" id="iphoneSteps">
+                        <li><span class="step-number">1</span><span>Tap the <b>Share</b> button
+                            <svg class="inline-icon" viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5M5 12v8h14v-8"/></svg>
+                            in Safari (on iOS 26, tap <b>⋯</b> first)</span></li>
+                        <li><span class="step-number">2</span><span>Tap <b>Add to Home Screen</b></span></li>
+                        <li><span class="step-number">3</span><span>Open <b>SLT App</b> from your home screen and enter your code again</span></li>
+                    </ol>
+
+                    <!-- Steps for Android when the one-tap install isn't ready -->
+                    <ol class="info-card steps d-none" id="androidSteps">
+                        <li><span class="step-number">1</span><span>Tap the <b>⋮ menu</b> at the top right of Chrome</span></li>
+                        <li><span class="step-number">2</span><span>Tap <b>Add to Home screen</b> or <b>Install app</b></span></li>
+                        <li><span class="step-number">3</span><span>Tap <b>Install</b></span></li>
+                    </ol>
+
+                    <div class="step-actions">
+                        <button type="button" class="btn-vf" id="installBtn">Add to home screen</button>
+                        <button type="button" class="btn-vf-light" id="installSkipBtn">Not now</button>
+                    </div>
+                </section>
+
+                <!-- ================= STEP B: NOTIFICATIONS ================= -->
+                <section class="access-step d-none" id="notifyStep">
+
+                    <div class="text-center">
+                        <img src="../media/assets/Bell.svg" class="step-illustration" alt="">
+                        <h1 class="page-title text-center">Keep notifications on!</h1>
+                        <p class="page-subtitle text-center">We'll only notify you about things that matter during your stay.</p>
+                    </div>
+
+                    <ul class="info-card">
+                        <li>
+                            <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="12" rx="2"/><path d="M4 10h16M7 16v3M17 16v3"/><circle cx="8" cy="13" r="0.6"/><circle cx="16" cy="13" r="0.6"/></svg>
+                            <span>Pickup reminders</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                            <span>Last minute time changes</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24"><path d="M4 10v4h3l7 4V6L7 10H4z"/><path d="M17.5 9.5a3.5 3.5 0 0 1 0 5"/></svg>
+                            <span>Urgent updates from the team</span>
+                        </li>
+                    </ul>
+
+                    <div class="step-actions">
+                        <button type="button" class="btn-vf" id="notifyBtn">
+                            <span class="btn-label">Allow notifications</span>
+                            <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn-vf-light" id="notifySkipBtn">Not now</button>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/dummy-data.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/guest-push.js"></script>
+    <script src="../js/AllowAccess.js"></script>
+
+</body>
+
+</html>

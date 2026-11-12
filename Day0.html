@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" class="home-html">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>SLT App | Day 0</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="../manifest.webmanifest">
+    <meta name="theme-color" content="#3A0505">
+    <link rel="apple-touch-icon" href="../media/icons/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="SLT App">
+
+    <!-- Fav Icon -->
+    <link rel="icon" type="image/svg+xml" href="../media/assets/VFLogo.svg">
+
+    <!-- Bootstrap -->
+    <link href="../bootstrap/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom css (Home.css = shared header, cards, weather, tour; Days.css = event-day pages) -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/Home.css">
+    <link rel="stylesheet" href="../css/Days.css">
+    <link rel="stylesheet" href="../css/AccessSheets.css">
+</head>
+
+<body class="home-page day-page">
+
+    <!-- ================= TOP HEADER (same as Home) ================= -->
+    <header class="home-hero">
+
+        <video class="hero-video" autoplay muted loop playsinline preload="auto"
+               poster="../media/home/header-motion.jpg" aria-hidden="true">
+            <source src="../media/home/header-motion.mp4" type="video/mp4">
+        </video>
+        <div class="hero-video-fade"></div>
+
+        <div class="home-container">
+
+            <div class="hero-bar">
+                <a href="Notifications.html" class="hero-icon-btn" id="notificationsBtn" aria-label="Notifications">
+                    <svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 2h-15L6 17z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+                    <span class="unread-dot d-none" id="unreadDot"></span>
+                </a>
+                <img src="../media/assets/VFLogo.svg" class="hero-logo" alt="Vodafone">
+                <a href="Contacts.html" class="hero-icon-btn" aria-label="Help and Support">
+                    <svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
+                </a>
+            </div>
+
+            <!-- Greeting: texts come from the Agenda row (EventWelcomeMessage / EventSloganMessage) -->
+            <div class="hero-text">
+                <div class="hero-hello">Hello, <span id="firstName"></span></div>
+                <h1 class="hero-title" id="welcomeMessage">We look forward to welcoming you in Egypt soon</h1>
+                <p class="hero-sub" id="sloganMessage">Please review the below to make sure you are prepared for your arrival</p>
+            </div>
+
+        </div>
+    </header>
+
+    <main class="home-container home-main">
+
+        <!-- ================= GUEST PASS (QR from the Users table: QRUrl) ================= -->
+        <button type="button" class="glass-card pass-card" id="passCard">
+            <span class="qr-thumb">
+                <img id="qrThumb" src="" alt="">
+                <img src="../media/assets/VFLogo.svg" class="qr-logo" alt="">
+            </span>
+            <span class="pass-text">
+                <span class="pass-title">Your Guest Pass is Ready!</span>
+                <span class="pass-sub">View QR for easy access at the gates.</span>
+            </span>
+            <svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+
+        <!-- ================= AIRPORT PICKUP (driver from the Users table) ================= -->
+        <h2 class="section-title">Airport Pickup</h2>
+        <div class="glass-card pickup-card">
+            <div class="pickup-top">
+                <div>
+                    <div class="pickup-label">Airport Pickup Details</div>
+                    <div class="pickup-main">Driver will meet you at arrivals</div>
+                </div>
+                <div class="pickup-actions" id="pickupActions">
+                    <a class="round-btn" id="driverWhatsApp" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp the driver">
+                        <!-- generic chat icon: replace with the WhatsApp icon exported from the design -->
+                        <svg viewBox="0 0 24 24" class="stroke-icon"><path d="M4.5 19.5l1.2-3.6A8 8 0 1 1 8.6 18.4z"/><path d="M9.2 9.3c.3 1.9 1.6 3.4 3.6 4.4l1-1 1.8.8-.4 1.6c-3 .2-6.6-3-6.7-6l1.5-.5.9 1.7z"/></svg>
+                    </a>
+                    <a class="round-btn" id="driverCall" aria-label="Call the driver">
+                        <svg viewBox="0 0 24 24" class="fill-icon"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg>
+                    </a>
+                </div>
+            </div>
+            <div class="pickup-route">
+                <div class="route-stop"><span class="route-start"></span><span id="pickupFrom"></span></div>
+                <span class="route-line"></span>
+                <div class="route-stop">
+                    <svg class="route-pin" viewBox="0 0 24 24"><path d="M12 22s-7-6.6-7-12a7 7 0 0 1 14 0c0 5.4-7 12-7 12z"/><circle cx="12" cy="10" r="2.6" fill="#fff"/></svg>
+                    <span id="pickupTo"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TONIGHT (events from the Agenda row) ================= -->
+        <h2 class="section-title" id="tonightTitle">Tonight</h2>
+        <div id="tonightEvents">
+            <div class="glass-card event-skeleton"></div>
+        </div>
+
+        <!-- ================= HOTEL (design shared later) ================= -->
+        <h2 class="section-title">Hotel</h2>
+        <button type="button" class="glass-card row-card hotel-row" id="hotelBtn">
+            <svg viewBox="0 0 28 28"><path d="M4 25V13h20v12M10 25v-5h8v5M8 17h2M18 17h2M13 17h2M9 13V9h10v4"/><path d="M8.5 4.5l.6 1.2 1.3.2-1 .9.3 1.3-1.2-.6-1.2.6.3-1.3-1-.9 1.3-.2zM14 3l.6 1.2 1.3.2-1 .9.3 1.3L14 6l-1.2.6.3-1.3-1-.9 1.3-.2zM19.5 4.5l.6 1.2 1.3.2-1 .9.3 1.3-1.2-.6-1.2.6.3-1.3-1-.9 1.3-.2z"/></svg>
+            <span>Hotel Details</span>
+            <svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+
+        <!-- ================= WEATHER (same rules as Home) ================= -->
+        <h2 class="section-title">Weather Forecast</h2>
+        <div class="glass-card weather-card">
+            <div class="weather-top">
+                <div>
+                    <div class="weather-today">Today</div>
+                    <div class="weather-date" id="weatherDate">--</div>
+                </div>
+                <img class="weather-big-icon" id="weatherIcon" src="../media/weather/sun.svg" alt="">
+                <div class="text-end">
+                    <div class="weather-max" id="weatherMax">--°C</div>
+                    <div class="weather-min" id="weatherMin">/--°C</div>
+                    <div class="weather-label" id="weatherLabel">Loading…</div>
+                </div>
+            </div>
+            <div class="weather-days" id="weatherDays"></div>
+        </div>
+
+        <!-- ================= OPTIONAL TOUR =================
+             registered -> compact card; not registered -> big card (Register Now, or closed after the deadline) -->
+        <h2 class="section-title">Optional Tour</h2>
+
+        <button type="button" class="glass-card tour-mini d-none" id="tourMini">
+            <img src="../media/home/tour-pyramids.jpg" class="tour-mini-img" alt="">
+            <span class="tour-mini-text">
+                <span class="tour-mini-when">Friday 11 Dec - Morning</span>
+                <span class="tour-mini-title">Pyramids Tour <img src="../media/assets/FlagEgypt.svg" class="flag" alt="Egypt"></span>
+            </span>
+            <span class="tour-mini-badge">Registered</span>
+            <svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+
+        <div class="glass-card tour-card d-none" id="tourCard">
+            <img src="../media/home/tour-pyramids.jpg" class="tour-img" alt="The Pyramids of Giza">
+            <div class="tour-when">Friday 11 December - Morning</div>
+            <h3 class="tour-title">Pyramids of Giza Tour <img src="../media/assets/FlagEgypt.svg" class="flag" alt="Egypt"></h3>
+            <p class="tour-text">End your trip with a guided morning at the Pyramids, together with colleagues from across Vodafone.</p>
+            <div class="tour-chips">
+                <div><span>Pick-up</span><b>From Hotel</b></div>
+                <div><span>Duration</span><b>4 Hours</b></div>
+                <div><span>Drop off</span><b>To Hotel</b></div>
+            </div>
+            <p class="tour-deadline" id="tourDeadline"></p>
+            <button type="button" class="btn-vf" id="tourBtn">Register Now</button>
+        </div>
+
+        <!-- ================= TESTING (testMode only) ================= -->
+        <div class="test-tools d-none" id="testTools">
+            <h2 class="section-title">Testing</h2>
+            <div class="glass-card">
+                <div class="test-row"><span>Data mode</span><b id="dataMode"></b></div>
+                <div class="test-row"><span>Phase</span><b id="phaseName"></b></div>
+                <div class="test-row"><span>Tour</span><b id="tourState"></b></div>
+                <div class="test-buttons">
+                    <button type="button" data-phase="before">Before Arrival</button>
+                    <button type="button" data-phase="Day0">Day 0</button>
+                    <button type="button" data-phase="Day1">Day 1</button>
+                    <button type="button" data-phase="Day2">Day 2</button>
+                    <button type="button" data-phase="Day3">Day 3</button>
+                    <button type="button" data-phase="Day4">Day 4 (last day)</button>
+                    <button type="button" data-phase="">By today's date</button>
+                    <button type="button" id="resetTourBtn">Tour: not registered</button>
+                    <button type="button" id="closeTourBtn">Tour: deadline passed</button>
+                    <button type="button" id="restartBtn">Start again</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ================= GUEST PASS SHEET (opens from the pass card) ================= -->
+    <div class="pass-backdrop" id="passBackdrop"></div>
+    <div class="pass-sheet" id="passSheet" role="dialog" aria-modal="true" aria-labelledby="passName" aria-hidden="true">
+        <div class="pass-sheet-top" id="passSheetTop">
+            <button type="button" class="pass-close" id="passCloseBtn" aria-label="Close">
+                <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+        </div>
+        <div class="pass-sheet-body">
+            <div class="pass-event anim">SLT Event 2026 - Guest</div>
+            <h2 class="pass-name anim" id="passName"></h2>
+            <div class="pass-qr anim">
+                <img id="qrLarge" src="" alt="Your guest pass QR code">
+                <img src="../media/assets/VFLogo.svg" class="qr-logo" alt="">
+            </div>
+            <h3 class="pass-ready anim">Your Guest Pass is ready!</h3>
+            <p class="pass-hint anim">Add it to your wallet for easy access at the gates.</p>
+            <button type="button" class="btn-vf pass-wallet anim" id="walletBtn">
+                <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h13a2 2 0 0 1 0 4H3M6 6l9-3 1.5 3"/></svg>
+                <span class="btn-label">Add to Wallet</span>
+                <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= TOUR CONFIRM SHEET (same as Home) ================= -->
+    <div class="sheet-backdrop" id="tourBackdrop"></div>
+    <div class="bottom-sheet" id="tourSheet" role="dialog" aria-modal="true" aria-labelledby="tourSheetTitle" aria-hidden="true">
+        <div class="sheet-handle" id="tourSheetHandle"><span></span></div>
+
+        <div class="sheet-body" id="tourAsk">
+            <img src="../media/home/tour-pyramids.jpg" class="sheet-thumb" alt="">
+            <h2 class="sheet-title" id="tourSheetTitle">Confirm your attendance?</h2>
+            <p class="sheet-text">Are you sure you'd like to confirm your attendance for the Pyramids of Giza Tour?</p>
+            <button type="button" class="btn-vf" id="tourConfirmBtn">
+                <span class="btn-label">Yes, confirm</span>
+                <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="sheet-link" id="tourNotNowBtn">Not now</button>
+        </div>
+
+        <div class="sheet-body d-none" id="tourDone">
+            <div class="sheet-success">
+                <svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+            </div>
+            <h2 class="sheet-title">You're registered!</h2>
+            <p class="sheet-text">See you on Friday 11 December. Pick-up is from the hotel.</p>
+            <button type="button" class="btn-vf" id="tourDoneBtn">Done</button>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/config-days.js"></script>
+    <script src="../js/dummy-data.js"></script>
+    <script src="../js/dummy-days.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/api-days.js"></script>
+    <script src="../js/day-common.js"></script>
+    <script src="../js/Day0.js"></script>
+     <script src="../js/guest-push.js"></script>
+    <script src="../js/AccessSheets.js"></script>   <!-- install + notifications pop-ups (first visit) -->
+
+</body>
+
+</html>

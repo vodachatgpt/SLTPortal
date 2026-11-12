@@ -1,3 +1,4 @@
+
 /* =========================================================
    SLT App - Install + notifications pop-ups
    Shown once over the home page (Home, Day0, EventDay, LastDay) after sign-in:
@@ -10,6 +11,7 @@
 let accessInstallPrompt = null;               // Android one-tap install
 let accessInstalled = isInstalledApp();       // sent to the back-end at the end
 let accessManualShown = false;                // phone without install button: steps shown, next tap = Done
+let accessNotifyBusy = false;                 // prevents duplicate notification requests
 
 /* Android keeps the install prompt for our button */
 window.addEventListener('beforeinstallprompt', e => {
@@ -87,47 +89,66 @@ function buildSheets() {
 
   document.getElementById('installBtn').addEventListener('click', onInstallTap);
   document.getElementById('installClose').addEventListener('click', afterInstallSheet);
- document.getElementById('notifyBtn').addEventListener('click', async () => {
-  setAccessLoading(true);
 
-  try {
-    if (isIphoneOrIpad() && !isInstalledApp()) {
-      throw new Error('Install and open the Home Screen app on iPhone first.');
+  /* =========================================================
+     ALLOW NOTIFICATION BUTTON
+     Same Web Push integration used in AllowAccess.js
+     ========================================================= */
+
+  document.getElementById('notifyBtn').addEventListener('click', async () => {
+
+    if (accessNotifyBusy) return;
+
+    accessNotifyBusy = true;
+    setAccessLoading(true);
+
+    try {
+
+      if (isIphoneOrIpad() && !isInstalledApp()) {
+        throw new Error('Install and open the Home Screen app on iPhone first.');
+      }
+
+      const result = await PartnerGuestPush.enable();
+
+      if (!result || !result.subscribed) {
+        throw new Error('Subscription was not confirmed by SLTAPI.');
+      }
+
+      await finishAccess('granted');
+
+    } catch (err) {
+
+      let message = document.getElementById('pushError');
+
+      if (!message) {
+        message = document.createElement('p');
+        message.id = 'pushError';
+        message.setAttribute('role', 'alert');
+        message.setAttribute('aria-live', 'polite');
+        message.style.color = '#b00020';
+
+        document
+          .getElementById('notifyBtn')
+          .parentNode
+          .appendChild(message);
+      }
+
+      message.textContent =
+        'Notifications were not enabled: ' +
+        (err?.message || 'Unknown error') +
+        '. Retry or select Not now.';
+
+      console.warn('[SLT direct Web Push]', err);
+
+    } finally {
+
+      accessNotifyBusy = false;
+      setAccessLoading(false);
+
     }
 
-    const result = await PartnerGuestPush.enable();
+  });
 
-    if (!result || !result.subscribed) {
-      throw new Error('Subscription was not confirmed by SLTAPI.');
-    }
-
-    await finishAccess('granted');
-  } catch (err) {
-
-    let message = document.getElementById('pushError');
-
-    if (!message) {
-      message = document.createElement('p');
-      message.id = 'pushError';
-      message.setAttribute('role', 'alert');
-      message.style.color = '#b00020';
-
-      document
-        .getElementById('notifyBtn')
-        .parentNode
-        .appendChild(message);
-    }
-
-    message.textContent =
-      'Notifications were not enabled: ' +
-      (err?.message || 'Unknown error') +
-      '. Retry or select Not now.';
-
-    console.warn('[SLT direct Web Push]', err);
-  } finally {
-    setAccessLoading(false);
-  }
-});
   document.getElementById('notifySkipBtn').addEventListener('click', () => finishAccess('skipped'));
   document.getElementById('notifyClose').addEventListener('click', () => finishAccess('skipped'));
 }
